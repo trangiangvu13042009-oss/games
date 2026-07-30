@@ -380,7 +380,8 @@
                 <button class="btn-quit" onclick="requestQuitGame()">🏠 Exit</button>
 
                 <div class="stat-box" style="color: var(--error);"><span id="lives">❤️❤️❤️</span></div>
-                <div class="timer-box" id="timer">00:20</div>
+                <!-- Đã cập nhật hiển thị ban đầu thành 00:08 -->
+                <div class="timer-box" id="timer">00:08</div>
                 <div class="stat-box" style="color: var(--warning);">🔥 <span id="streak">0</span></div>
             </div>
             
@@ -605,7 +606,7 @@
             {c:'cm', n:['cameroon'], o:'Cameroon', cap:'Yaoundé', cont:'Africa', t:'Known as "Africa in miniature" for its diverse landscapes.'},
             {c:'eg', n:['egypt'], o:'Egypt', cap:'Cairo', cont:'Africa', t:'Famous for the ancient Pyramids of Giza and the Sphinx.'},
             {c:'et', n:['ethiopia'], o:'Ethiopia', cap:'Addis Ababa', cont:'Africa', t:'The only African nation never fully colonized by a European power.'},
-            {c:'gh', n:['ghana'], o:'Ghana', cap:'Accra', cont:'Africa', t:'Was the first sub-Saharan African country to gain independence.'},
+            {c:'gh', n:['ghana'], o:'Accra', o:'Ghana', cap:'Accra', cont:'Africa', t:'Was the first sub-Saharan African country to gain independence.'},
             {c:'ke', n:['kenya'], o:'Kenya', cap:'Nairobi', cont:'Africa', t:'Renowned globally for its classic savannah safaris.'},
             {c:'mg', n:['madagascar'], o:'Madagascar', cap:'Antananarivo', cont:'Africa', t:'Over 90% of its wildlife is found nowhere else on Earth.'},
             {c:'ma', n:['morocco'], o:'Morocco', cap:'Rabat', cont:'Africa', t:'Famous for the vibrant markets (souks) in Marrakech.'},
@@ -664,7 +665,8 @@
             score = 0; streak = 0; mistakes = 0; correctCount = 0; questionsAsked = 0;
             availablePool = [...db]; 
             
-            timeLeft = (mode === 'rush') ? 180 : 20;
+            // Giảm xuống 8 giây ở các mode thường, giữ 180s cho Rush Mode
+            timeLeft = (mode === 'rush') ? 180 : 8;
 
             updateUI();
             loadNextQuestion();
@@ -689,7 +691,8 @@
             document.getElementById('result-box').style.display = 'none';
             inp.focus();
 
-            if (currentMode !== 'rush') timeLeft = 20; 
+            // Sửa thời gian reset mỗi câu hỏi thành 8 giây (trừ chế độ Rush)
+            if (currentMode !== 'rush') timeLeft = 8; 
             updateTimerDisplay();
             startTimer();
 
