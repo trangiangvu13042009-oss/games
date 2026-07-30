@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Flag Trivia 🌍 - My Game Hub</title>
     <style>
-        /* Bảng màu Dark Mode đồng bộ với index.html */
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
@@ -34,7 +33,6 @@
             flex-direction: column;
         }
 
-        /* Thanh điều hướng Header */
         header {
             background-color: #1a1a1a;
             border-bottom: 1px solid var(--border-color);
@@ -66,7 +64,6 @@
             color: var(--accent-color);
         }
 
-        /* Khu vực hiển thị Game */
         main {
             flex: 1;
             display: flex;
@@ -75,7 +72,6 @@
             padding: 40px 20px;
         }
 
-        /* Screens */
         #menu-screen, #game-screen { 
             background: var(--card-bg); 
             width: 100%; 
@@ -89,7 +85,6 @@
         }
         #game-screen { display: none; }
 
-        /* Menu Game */
         .menu-title { font-size: 28px; margin-bottom: 15px; color: #ffffff; }
         .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .mode-btn { 
@@ -128,7 +123,6 @@
             background: rgba(241, 196, 15, 0.25); 
         }
 
-        /* ===== DESIGN SWITCH BẤT TỬ (GOD MODE) ===== */
         .god-mode-container {
             display: flex;
             align-items: center;
@@ -191,7 +185,6 @@
             transform: translateX(24px);
         }
 
-        /* Header Info trong Game */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .stat-box { 
             background: #121212; 
@@ -204,7 +197,6 @@
         .timer-box { font-size: 20px; font-weight: 800; color: var(--error); animation: pulse 1s infinite; }
         .progress-text { margin-bottom: 15px; font-weight: 600; color: #a0a0a0; }
 
-        /* Nút Exit / Quay về */
         .btn-quit {
             background: #141414;
             border: 1px solid var(--border-color);
@@ -225,7 +217,6 @@
             background: rgba(231, 76, 60, 0.1);
         }
 
-        /* Flag Area */
         .flag-box { 
             width: 100%; 
             height: 200px; 
@@ -240,7 +231,6 @@
         }
         .flag-img { max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); }
 
-        /* Inputs & Buttons */
         .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
         input[type="text"] { 
             flex: 1; 
@@ -268,7 +258,6 @@
         .btn-secondary { background: #2c3e50; color: #ffffff; }
         .btn-secondary:hover { background: #34495e; }
         
-        /* Result & Hint */
         .hint-box { 
             background: rgba(241, 196, 15, 0.1); 
             color: #f1c40f; 
@@ -285,7 +274,6 @@
         .result-box.incorrect { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
         .trivia-fact { margin-top: 8px; font-size: 13px; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 8px; }
 
-        /* Modal Pop-up */
         .modal-overlay { 
             position: fixed; 
             top: 0; left: 0; right: 0; bottom: 0; 
@@ -309,7 +297,6 @@
         .modal-title { font-size: 24px; margin-bottom: 10px; color: #ffffff; }
         .modal-score { font-size: 40px; color: var(--accent-color); font-weight: 900; margin: 15px 0; }
 
-        /* Footer */
         footer {
             background-color: #1a1a1a;
             border-top: 1px solid var(--border-color);
@@ -326,24 +313,20 @@
 </head>
 <body>
 
-    <!-- Header / Navigation Bar -->
     <header>
         <div class="nav-container">
             <a href="index.html" class="logo">🎮 My<span>GameHub</span></a>
         </div>
     </header>
 
-    <!-- Main Game Container -->
     <main>
-        <!-- MENU CHỌN CHẾ ĐỘ -->
         <div id="menu-screen">
             <h1 class="menu-title">🌎 Global Flag Trivia</h1>
             <p style="margin-bottom: 15px; color: #a0a0a0;">Answer strictly in English. Max 3 mistakes allowed!</p>
             
-            <!-- CÔNG TẮC BẤT TỬ (GOD MODE) -->
             <div class="god-mode-container">
                 <div class="god-mode-label">
-                    🛡️ God Mode (Bất tử)
+                    🛡️ God Mode (Invincible)
                 </div>
                 <label class="switch">
                     <input type="checkbox" id="godmode-toggle">
@@ -358,12 +341,12 @@
                 <button class="mode-btn all" onclick="startGame('all')">🌍 All Countries</button>
                 <button class="mode-btn rush" onclick="startGame('rush')">⚡ RUSH MODE (3 Mins)</button>
             </div>
+
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="xemBangXepHang(5)">🏆 View Leaderboard (Mode 5)</button>
         </div>
 
-        <!-- MÀN HÌNH CHƠI GAME -->
         <div id="game-screen">
             <div class="header">
-                <!-- NÚT THOÁT VỀ MENU -->
                 <button class="btn-quit" onclick="requestQuitGame()">🏠 Exit</button>
 
                 <div class="stat-box" style="color: var(--error);"><span id="lives">❤️❤️❤️</span></div>
@@ -400,7 +383,7 @@
         </div>
     </main>
 
-    <!-- POP-UP CẢNH BÁO QUAY VỀ MENU -->
+    <!-- QUIT CONFIRMATION MODAL -->
     <div id="quit-modal" class="modal-overlay">
         <div class="modal-content">
             <h2 class="modal-title" style="color: var(--warning);">⚠️ Quit Game?</h2>
@@ -412,7 +395,7 @@
         </div>
     </div>
 
-    <!-- POP-UP THÔNG BÁO KẾT THÚC -->
+    <!-- GAME OVER MODAL -->
     <div id="game-over-modal" class="modal-overlay">
         <div class="modal-content">
             <h2 class="modal-title" id="modal-title">GAME OVER! 😢</h2>
@@ -423,15 +406,40 @@
         </div>
     </div>
 
-    <!-- Footer -->
+    <!-- LEADERBOARD MODAL -->
+    <div id="leaderboard-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2 class="modal-title" style="color: var(--warning);">🏆 LEADERBOARD</h2>
+            <p id="lb-mode-title" style="color: #a0a0a0; margin-bottom: 15px; font-weight: 600;"></p>
+            
+            <div style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--border-color); color: var(--accent-color);">
+                            <th style="padding: 8px;">#</th>
+                            <th style="padding: 8px;">Name</th>
+                            <th style="padding: 8px;">Score</th>
+                            <th style="padding: 8px;">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lb-table-body">
+                        <!-- Data from C# API will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="btn btn-secondary" style="width: 100%;" onclick="dongBangXepHang()">Close ✖️</button>
+        </div>
+    </div>
+
     <footer>
-        <p>&copy; 2026 My Game Hub. Được thiết kế bởi một Developer tràn đầy nhiệt huyết.</p>
+        <p>&copy; 2026 My Game Hub. Designed by a passionate developer.</p>
     </footer>
 
     <script>
-        // NGÂN HÀNG DỮ LIỆU CHUẨN 120 QUỐC GIA
+        const API_URL = "https://leaderboard-backend-xp1v.onrender.com/";
+
         const db = [
-            // ASIA
             {c:'af', n:['afghanistan'], o:'Afghanistan', cap:'Kabul', cont:'Asia', t:'Landlocked country located at the crossroads of Central and South Asia.'},
             {c:'am', n:['armenia'], o:'Armenia', cap:'Yerevan', cont:'Asia', t:'Known as the first country to adopt Christianity as its state religion.'},
             {c:'az', n:['azerbaijan'], o:'Azerbaijan', cap:'Baku', cont:'Asia', t:'Famous for the "Burning Mountain" (Yanar Dag).'},
@@ -478,7 +486,6 @@
             {c:'vn', n:['vietnam', 'viet nam'], o:'Vietnam', cap:'Hanoi', cont:'Asia', t:'The world’s leading exporter of Robusta coffee and cashews.'},
             {c:'ye', n:['yemen'], o:'Yemen', cap:'Sanaa', cont:'Asia', t:'Home to Shibam, often called the "Manhattan of the Desert".'},
 
-            // EUROPE
             {c:'al', n:['albania'], o:'Albania', cap:'Tirana', cont:'Europe', t:'Features thousands of Cold War-era concrete bunkers.'},
             {c:'at', n:['austria'], o:'Austria', cap:'Vienna', cont:'Europe', t:'The birthplace of Mozart and famous for the Alps.'},
             {c:'by', n:['belarus'], o:'Belarus', cap:'Minsk', cont:'Europe', t:'Known for its vast primeval forests, like Białowieża.'},
@@ -523,7 +530,6 @@
             {c:'ua', n:['ukraine'], o:'Ukraine', cap:'Kyiv', cont:'Europe', t:'Often referred to as the "breadbasket of Europe".'},
             {c:'va', n:['vatican city', 'vatican'], o:'Vatican City', cap:'Vatican City', cont:'Europe', t:'The smallest independent state in the world by both area and population.'},
 
-            // AMERICAS
             {c:'ag', n:['antigua and barbuda'], o:'Antigua & Barbuda', cap:'St. John\'s', cont:'North America', t:'Known for having 365 beaches, one for every day of the year.'},
             {c:'ar', n:['argentina'], o:'Argentina', cap:'Buenos Aires', cont:'South America', t:'The birthplace of the Tango dance.'},
             {c:'bs', n:['bahamas', 'the bahamas'], o:'Bahamas', cap:'Nassau', cont:'North America', t:'An archipelago consisting of over 700 islands.'},
@@ -553,7 +559,6 @@
             {c:'uy', n:['uruguay'], o:'Uruguay', cap:'Montevideo', cont:'South America', t:'Hosted and won the very first FIFA World Cup in 1930.'},
             {c:'ve', n:['venezuela'], o:'Venezuela', cap:'Caracas', cont:'South America', t:'Home to Angel Falls, the world’s highest uninterrupted waterfall.'},
 
-            // AFRICA
             {c:'dz', n:['algeria'], o:'Algeria', cap:'Algiers', cont:'Africa', t:'The largest country in Africa by land area.'},
             {c:'ao', n:['angola'], o:'Angola', cap:'Luanda', cont:'Africa', t:'Portuguese is the official language due to colonial history.'},
             {c:'bw', n:['botswana'], o:'Botswana', cap:'Gaborone', cont:'Africa', t:'One of the world’s largest producers of diamonds.'},
@@ -573,7 +578,6 @@
             {c:'zm', n:['zambia'], o:'Zambia', cap:'Lusaka', cont:'Africa', t:'Shares the spectacular Victoria Falls with Zimbabwe.'},
             {c:'zw', n:['zimbabwe'], o:'Zimbabwe', cap:'Harare', cont:'Africa', t:'Once experienced hyperinflation resulting in a 100 Trillion dollar note.'},
 
-            // OCEANIA
             {c:'au', n:['australia'], o:'Australia', cap:'Canberra', cont:'Oceania', t:'Both a country and a continent, famous for Kangaroos.'},
             {c:'fj', n:['fiji'], o:'Fiji', cap:'Suva', cont:'Oceania', t:'An archipelago of more than 300 islands.'},
             {c:'nz', n:['new zealand'], o:'New Zealand', cap:'Wellington', cont:'Oceania', t:'The filming location for "The Lord of the Rings" trilogy.'},
@@ -581,7 +585,6 @@
             {c:'ws', n:['samoa'], o:'Samoa', cap:'Apia', cont:'Oceania', t:'Features traditional Polynesian culture and tattoos.'}
         ];
 
-        // TRẠNG THÁI GAME
         let score = 0, streak = 0, mistakes = 0, correctCount = 0;
         const maxMistakes = 3; 
         let currentMode = null;
@@ -590,24 +593,25 @@
         let availablePool = [];
         let currentCountry = null;
         let hintLevel = 0;
-        let isGodMode = false; // Trạng thái Bất tử
+        let isGodMode = false;
 
         let timerInterval;
         let timeLeft = 0; 
         let isWaitingForNext = false; 
+        let gameStartTime = 0;
 
         function cleanInput(str) {
             return str.toLowerCase().replace(/[^a-z0-9 ]/g, "").trim();
         }
 
         function startGame(mode) {
-            // Kiểm tra trạng thái nút bật God Mode
             isGodMode = document.getElementById('godmode-toggle').checked;
 
             document.getElementById('menu-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'block';
             
             currentMode = mode;
+            gameStartTime = Date.now();
             
             if (mode === 'rush') {
                 maxQuestions = Infinity;
@@ -711,7 +715,6 @@
                 resTitle.innerHTML = `🎉 CORRECT! It is <strong>${currentCountry.o}</strong> (+${pts} pts)`;
             } else {
                 streak = 0; 
-                // Nếu BẮT TỬ, không cộng số lỗi sai
                 if (!isGodMode) {
                     mistakes++;
                 }
@@ -727,14 +730,13 @@
             resBox.style.display = 'block';
             updateUI();
 
-            // Chỉ tính thua do quá 3 lỗi khi KHÔNG BẬT God Mode
-            if (!isGodMode && mistakes > maxMistakes) {
-                setTimeout(() => endGame('You made more than 3 mistakes!'), 1500);
+            if (!isGodMode && mistakes >= maxMistakes) {
+                setTimeout(() => endGame('You reached the maximum allowed mistakes!'), 1500);
             }
         }
 
         function skipQuestion() {
-            if (isWaitingForNext || (!isGodMode && mistakes > maxMistakes)) return;
+            if (isWaitingForNext || (!isGodMode && mistakes >= maxMistakes)) return;
             processResult(false, false);
         }
 
@@ -748,7 +750,7 @@
         }
 
         function nextQuestion() {
-            if (!isGodMode && mistakes > maxMistakes) return;
+            if (!isGodMode && mistakes >= maxMistakes) return;
             
             if (currentMode !== 'rush' && questionsAsked >= maxQuestions) {
                 endGame('You completed the challenge! 🏆');
@@ -774,16 +776,13 @@
             }
         }
 
-        // --- XỬ LÝ CẢNH BÁO QUAY VỀ MENU ---
         function requestQuitGame() {
-            // Tạm dừng đếm thời gian
             clearInterval(timerInterval);
             document.getElementById('quit-modal').style.display = 'flex';
         }
 
         function cancelQuitGame() {
             document.getElementById('quit-modal').style.display = 'none';
-            // Resume lại đếm thời gian nếu chưa chuyển câu tiếp theo
             if (!isWaitingForNext) {
                 startTimer();
             }
@@ -794,34 +793,120 @@
             backToMenu();
         }
 
+        // ==========================================================
+        // C# WEB API INTEGRATION
+        // ==========================================================
+
+        async function guiDiemLenServer(tenNguoiChoi, diemSo, thoiGianGiay, cheDoChoi, laGodMode) {
+            const duLieuGui = {
+                playerName: tenNguoiChoi,
+                score: diemSo,
+                timeInSeconds: thoiGianGiay,
+                mode: String(cheDoChoi),
+                isGodMode: laGodMode
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(duLieuGui)
+                });
+
+                const ketQua = await response.json();
+                console.log("Score saved successfully:", ketQua);
+                
+                // Display Leaderboard Modal
+                xemBangXepHang(cheDoChoi);
+            } catch (error) {
+                console.error("Error submitting score to Web API:", error);
+            }
+        }
+
+        async function xemBangXepHang(cheDoChoi) {
+            try {
+                const response = await fetch(`${API_URL}?mode=${cheDoChoi}`);
+                const top10 = await response.json();
+
+                const tableBody = document.getElementById('lb-table-body');
+                const modeTitle = document.getElementById('lb-mode-title');
+                
+                modeTitle.textContent = `Mode: ${String(cheDoChoi).toUpperCase()}`;
+                tableBody.innerHTML = ''; 
+
+                if (!top10 || top10.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 15px; color: #a0a0a0;">No records found!</td></tr>`;
+                } else {
+                    top10.forEach((item, index) => {
+                        let rankIcon = `#${index + 1}`;
+                        if (index === 0) rankIcon = '🥇 1';
+                        else if (index === 1) rankIcon = '🥈 2';
+                        else if (index === 2) rankIcon = '🥉 3';
+
+                        const row = `
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 10px 8px; font-weight: bold;">${rankIcon}</td>
+                                <td style="padding: 10px 8px; color: #fff;">${item.playerName}</td>
+                                <td style="padding: 10px 8px; color: var(--warning); font-weight: bold;">${item.score}</td>
+                                <td style="padding: 10px 8px; color: #a0a0a0;">${item.timeInSeconds}s</td>
+                            </tr>
+                        `;
+                        tableBody.innerHTML += row;
+                    });
+                }
+
+                // Open Leaderboard Modal
+                document.getElementById('leaderboard-modal').style.display = 'flex';
+            } catch (error) {
+                console.error("Error loading leaderboard:", error);
+                alert("Could not connect to the Leaderboard server! Make sure the C# Web API is running.");
+            }
+        }
+
+        function dongBangXepHang() {
+            document.getElementById('leaderboard-modal').style.display = 'none';
+        }
+
         function endGame(reason) {
             clearInterval(timerInterval);
-            document.getElementById('modal-title').innerHTML = (mistakes <= maxMistakes && currentMode !== 'rush') || isGodMode ? "VICTORY! 🏆" : "GAME OVER! 😢";
+            let totalTime = Math.floor((Date.now() - gameStartTime) / 1000);
+
+            document.getElementById('modal-title').innerHTML = (mistakes < maxMistakes && currentMode !== 'rush') || isGodMode ? "VICTORY! 🏆" : (currentMode === 'rush' ? "TIME'S UP! ⚡" : "GAME OVER! 😢");
             document.getElementById('modal-desc').textContent = reason;
             document.getElementById('modal-score').textContent = score;
             document.getElementById('modal-correct').textContent = correctCount;
             
             document.getElementById('game-over-modal').style.display = 'flex';
+
+            setTimeout(() => {
+                let tenNguoiChoi = prompt("Congratulations! Enter your name for the Leaderboard:", "Player");
+                if (tenNguoiChoi !== null) {
+                    if (!tenNguoiChoi.trim()) tenNguoiChoi = "Anonymous";
+                    guiDiemLenServer(tenNguoiChoi, score, totalTime, currentMode, isGodMode);
+                }
+            }, 300);
         }
 
         function backToMenu() {
             clearInterval(timerInterval);
             document.getElementById('game-over-modal').style.display = 'none';
             document.getElementById('quit-modal').style.display = 'none';
+            document.getElementById('leaderboard-modal').style.display = 'none';
             document.getElementById('game-screen').style.display = 'none';
             document.getElementById('menu-screen').style.display = 'block';
         }
 
-        // --- SỰ KIỆN LẮNG NGHE PHÍM ENTER ĐỂ SANG CỜ TIẾP THEO ---
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 const quitModal = document.getElementById('quit-modal');
                 const gameOverModal = document.getElementById('game-over-modal');
+                const leaderboardModal = document.getElementById('leaderboard-modal');
+                
                 const isQuitModalOpen = quitModal && quitModal.style.display === 'flex';
                 const isGameOverModalOpen = gameOverModal && gameOverModal.style.display === 'flex';
+                const isLeaderboardOpen = leaderboardModal && leaderboardModal.style.display === 'flex';
 
-                // Chỉ kích hoạt Next khi đang ở trạng thái chờ câu mới và không mở pop-up nào
-                if (isWaitingForNext && !isQuitModalOpen && !isGameOverModalOpen) {
+                if (isWaitingForNext && !isQuitModalOpen && !isGameOverModalOpen && !isLeaderboardOpen) {
                     e.preventDefault();
                     nextQuestion();
                 }
