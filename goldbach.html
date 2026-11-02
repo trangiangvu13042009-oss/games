@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#121212">
+    <title>Goldbach's Game</title>
+    <style>
+        /* ============================== 
+           1. BIẾN MÀU VÀ THIẾT LẬP CHUNG
+        ============================== */
+        :root {
+            --bg: #121212;
+            --surface: #1e1e1e;
+            --surface-2: #252525;
+            --primary: #1a73e8;
+            --primary-hover: #3189f5;
+            --text: #eaeaea;
+            --muted: #a0a0a0;
+            --border: #303030;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        [hidden] { display: none !important; }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 50% -20%, rgba(26,115,232,.12), transparent 45%),
+                var(--bg);
+            font-family: Inter, Roboto, "Segoe UI", Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        button, input { font: inherit; }
+        button { cursor: pointer; }
+        button:disabled { cursor: not-allowed; opacity: .55; }
+
+        /* ==============================
+           2. HEADER MY GAMEHUB
+        ============================== */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            width: 100%;
+            background: #1a1a1a;
+            border-bottom: 1px solid #2c3e50;
+        }
+
+        .navbar {
+            max-width: 1200px;
+            width: 100%;
+            min-height: 84px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            color: #fff;
+            text-decoration: none;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .brand-icon { font-size: 1.45em; line-height: 1; }
+        .brand-name span { color: var(--primary); }
+        .brand:focus-visible, .language-toggle:focus-visible,
+        button:focus-visible, input:focus-visible {
+            outline: 2px solid #93c5fd;
+            outline-offset: 3px;
+        }
+
+        .language-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border: 1px solid #f1c40f;
+            border-radius: 20px;
+            background: transparent;
+            color: #f1c40f;
+            font-size: .85rem;
+            font-weight: 750;
+            white-space: nowrap;
+            transition: background .2s ease, color .2s ease;
+        }
+
+        .language-toggle:hover { background: #f1c40f; color: #121212; }
+        .language-toggle .separator { opacity: .65; }
+        .language-toggle .selected { text-decoration: underline; text-underline-offset: 3px; }
+
+        /* ==============================
+           3. KHUNG NỘI DUNG VÀ THÀNH PHẦN CHUNG
+        ============================== */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 42px 20px 54px;
+        }
+
+        .screen { animation: fadeIn .35s ease both; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            padding: 25px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 12px 30px rgba(0,0,0,.24);
+        }
+
+        .primary-btn, .secondary-btn {
+            min-height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 11px 23px;
+            border-radius: 9px;
+            font-weight: 750;
+            transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+        }
+
+        .primary-btn {
+            color: #fff;
+            background: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(26,115,232,.28);
+        }
+
+        .primary-btn:active:not(:disabled), .secondary-btn:active:not(:disabled) {
+            transform: scale(.98);
+        }
+
+        .secondary-btn {
+            color: var(--text);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+        }
+
+        .secondary-btn:hover:not(:disabled) { background: #333; border-color: #555; }
+        .section-label {
+            color: var(--muted);
+            font-size: .82rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ==============================
+           4. MÀN HÌNH BẮT ĐẦU
+        ============================== */
+        #startScreen { text-align: center; }
+        .hero-icon {
+            margin-bottom: 10px;
+            font-size: 4rem;
+            filter: drop-shadow(0 0 18px rgba(26,115,232,.35));
+        }
+
+        .hero-title {
+            margin-bottom: 12px;
+            color: #fff;
+            font-size: clamp(2.15rem, 6vw, 3.5rem);
+            font-weight: 850;
+            letter-spacing: -1.5px;
+        }
+
+        .hero-title span { color: var(--primary); }
+        .hero-description {
+            max-width: 620px;
+            margin: 0 auto 27px;
+            color: var(--muted);
+            font-size: 1.02rem;
+            line-height: 1.8;
+        }
+
+        .formula-card {
+            max-width: 550px;
+            margin: 0 auto 27px;
+            padding: 22px;
+            border: 1px solid rgba(26,115,232,.25);
+            border-radius: 14px;
+            background: rgba(26,115,232,.07);
+        }
+
+        .formula {
+            margin: 10px 0;
+            color: #fff;
+            font-size: clamp(1.8rem, 6vw, 2.7rem);
+            font-weight: 850;
+            letter-spacing: 2px;
+        }
+
+        .formula .prime { color: #60a5fa; }
+        .formula .plus { color: #fbbf24; }
+        .formula-note { color: var(--muted); font-size: .9rem; }
+        .start-btn { width: 100%; max-width: 320px; min-height: 58px; font-size: 1.08rem; }
+
+        .record-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 28px;
+            padding: 11px 22px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface);
+            text-align: left;
+        }
+
+        .record-icon { font-size: 1.8rem; }
+        .record-label { display: block; color: var(--muted); font-size: .8rem; }
+        .record-value { display: block; color: #facc15; font-size: 1.2rem; font-weight: 850; }
+
+        /* ==============================
+           5. HUD VÀ THANH THỜI GIAN
+        ============================== */
+        .game-heading { display: flex; justify-content: space-between; margin-bottom: 18px; }
+        .game-heading h2 { color: #fff; font-size: 1.4rem; }
+        .hud { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+        .hud-item {
+            padding: 13px 9px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface);
+            text-align: center;
+        }
+
+        .hud-label { display: block; color: var(--muted); font-size: .73rem; font-weight: 700; }
+        .hud-value { display: block; margin-top: 3px; color: #fff; font-size: 1.45rem; font-weight: 850; }
+        #scoreValue { color: #facc15; }
+        #streakValue { color: #fb923c; }
+
+        .timer-card { margin-bottom: 18px; padding: 17px 20px; }
+        .timer-header { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 9px; }
+        .timer-header span:first-child { color: var(--muted); font-size: .9rem; font-weight: 650; }
+        #timerText { color: #4ade80; font-weight: 850; font-variant-numeric: tabular-nums; }
+        .timer-track { width: 100%; height: 11px; overflow: hidden; border-radius: 20px; background: #353535; }
+        .timer-fill {
+            width: 100%; height: 100%; border-radius: inherit; background: #22c55e;
+            transition: width .08s linear, background-color .2s ease;
+        }
+
+        /* ==============================
+           6. KHU VỰC CÂU HỎI VÀ Ô NHẬP
+        ============================== */
+        .question-card { padding: 29px 24px; text-align: center; }
+        .target-number {
+            margin: 10px 0 7px;
+            color: #fff;
+            font-size: clamp(4rem, 12vw, 6rem);
+            font-weight: 900;
+            line-height: 1.2;
+            letter-spacing: -2px;
+            text-shadow: 0 0 25px rgba(26,115,232,.3);
+        }
+
+        .target-description { margin-bottom: 24px; color: var(--muted); font-size: .94rem; }
+        .input-area {
+            display: grid;
+            grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
+            align-items: end;
+            gap: 12px;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .input-group { min-width: 0; text-align: left; }
+        .input-group label { display: block; margin-bottom: 7px; color: var(--muted); font-size: .84rem; font-weight: 700; }
+        .prime-input {
+            width: 100%; height: 57px; padding: 9px 12px;
+            border: 2px solid #3a3a3a; border-radius: 10px;
+            outline: none; background: #151515; color: #fff;
+            font-size: 1.55rem; font-weight: 800; text-align: center;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .prime-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(26,115,232,.15); }
+        .plus-sign { padding-bottom: 8px; color: #facc15; font-size: 2rem; font-weight: 900; }
+        .input-hint { margin-top: 11px; color: #777; font-size: .8rem; }
+        .action-area { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 23px; }
+        .action-area .primary-btn { min-width: 175px; }
+        .hint-btn { color: #fbbf24; border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.08); }
+        .hint-btn:hover:not(:disabled) { border-color: #fbbf24; background: rgba(245,158,11,.16); }
+
+        /* ==============================
+           7. PHẢN HỒI VÀ MÀN HÌNH KẾT THÚC
+        ============================== */
+        .feedback {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 54px; margin-top: 19px; padding: 11px;
+            border: 1px solid transparent; border-radius: 10px;
+            font-weight: 700; text-align: center; overflow-wrap: anywhere;
+        }
+
+        .feedback:empty { visibility: hidden; }
+        .feedback.success { color: #4ade80; border-color: rgba(34,197,94,.2); background: rgba(34,197,94,.09); }
+        .feedback.error { color: #f87171; border-color: rgba(239,68,68,.2); background: rgba(239,68,68,.09); }
+        .feedback.info { color: #60a5fa; border-color: rgba(26,115,232,.2); background: rgba(26,115,232,.09); }
+        .feedback.show { animation: feedbackPop .25s ease; }
+        @keyframes feedbackPop { from { opacity: 0; transform: scale(.98); } to { opacity: 1; transform: scale(1); } }
+
+        #gameOverScreen { text-align: center; }
+        .gameover-icon { margin-bottom: 8px; font-size: 4.4rem; }
+        .gameover-title { margin-bottom: 9px; color: #f87171; font-size: clamp(2rem, 6vw, 3rem); font-weight: 850; }
+        .gameover-description { margin-bottom: 23px; color: var(--muted); }
+        .result-card { max-width: 500px; margin: 0 auto 24px; padding: 24px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+        .result-score { color: #facc15; font-size: 3rem; font-weight: 900; }
+        .result-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-top: 17px; }
+        .result-item { padding: 14px 8px; border: 1px solid var(--border); border-radius: 10px; background: #151515; }
+        .result-item span:first-child { display: block; color: var(--muted); font-size: .8rem; }
+        .result-item span:last-child { display: block; color: #fff; font-size: 1.4rem; font-weight: 800; }
+        .new-record { margin-top: 14px; color: #facc15; font-weight: 750; }
+
+        /* ==============================
+           8. FOOTER VÀ THIẾT BỊ NHỎ
+        ============================== */
+        footer {
+            margin-top: auto; padding: 18px;
+            border-top: 1px solid var(--border); background: #181818;
+            color: #686868; text-align: center; font-size: .85rem;
+        }
+
+        @media (max-width: 600px) {
+            .navbar { min-height: 70px; padding: 10px 14px; }
+            .brand { gap: 8px; font-size: 1.12rem; }
+            .language-toggle { padding: 6px 9px; font-size: .78rem; }
+            main { padding: 30px 14px 40px; }
+            .hero-description { font-size: .95rem; }
+            .card { padding: 19px 15px; }
+            .hud { gap: 7px; }
+            .hud-item { padding: 11px 4px; }
+            .hud-label { font-size: .64rem; }
+            .hud-value { font-size: 1.2rem; }
+            .question-card { padding: 24px 13px; }
+            .input-area { gap: 7px; }
+            .prime-input { height: 53px; padding: 8px 5px; font-size: 1.35rem; }
+            .input-group label { font-size: .75rem; }
+            .action-area { flex-direction: column; }
+            .action-area button { width: 100%; }
+            .start-btn { max-width: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Thanh điều hướng mang người chơi trở về My GameHub -->
+    <header>
+        <div class="navbar">
+            <a class="brand" href="index.html" aria-label="Quay về My GameHub" title="My GameHub">
+                <span class="brand-icon" aria-hidden="true">🎮</span>
+                <span class="brand-name">My <span>GameHub</span></span>
+            </a>
+
+            <button class="language-toggle" id="languageToggle" type="button" aria-label="Chuyển đổi ngôn ngữ">
+                <span id="langVI" class="selected">🇻🇳 VI</span>
+                <span class="separator">|</span>
+                <span id="langEN">🇬🇧 EN</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Màn hình bắt đầu -->
+        <section id="startScreen" class="screen">
+            <div class="hero-icon" aria-hidden="true">🧮</div>
+            <h1 class="hero-title">Goldbach's <span>Game</span></h1>
+            <p class="hero-description" id="startDescription">
+                Khám phá thế giới số nguyên tố và thử thách khả năng tư duy toán học của bạn!
+            </p>
+
+            <div class="formula-card">
+                <div class="section-label" id="theoryLabel">GIẢ THUYẾT GOLDBACH</div>
+                <div class="formula"><span class="prime">7</span> <span class="plus">+</span> <span class="prime">13</span> = <span>20</span></div>
+                <p class="formula-note" id="formulaDescription">
+                    Mọi số chẵn lớn hơn 2 đều có thể biểu diễn thành tổng của hai số nguyên tố.
+                </p>
+            </div>
+
+            <button class="primary-btn start-btn" id="startButton" type="button">
+                <span id="startButtonText">Bắt đầu chơi</span><span aria-hidden="true">⚡</span>
+            </button>
+
+            <div class="record-card">
+                <div class="record-icon" aria-hidden="true">🏆</div>
+                <div>
+                    <span class="record-label" id="highScoreLabel">Kỷ lục cao nhất</span>
+                    <span class="record-value" id="startHighScore">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Màn hình chơi -->
+        <section id="gameScreen" class="screen" hidden>
+            <div class="game-heading"><h2 id="gameHeading">🧠 Thử thách toán học</h2></div>
+
+            <div class="hud">
+                <div class="hud-item"><span class="hud-label" id="levelLabel">CẤP ĐỘ</span><span class="hud-value" id="levelValue">1</span></div>
+                <div class="hud-item"><span class="hud-label" id="streakLabel">CHUỖI THẮNG</span><span class="hud-value" id="streakValue">0 🔥</span></div>
+                <div class="hud-item"><span class="hud-label" id="scoreLabel">ĐIỂM SỐ</span><span class="hud-value" id="scoreValue">0</span></div>
+            </div>
+
+            <div class="card timer-card">
+                <div class="timer-header">
+                    <span id="timerLabel">⏳ Thời gian còn lại</span>
+                    <span id="timerText">10s</span>
+                </div>
+                <div class="timer-track" id="timerProgress" role="progressbar" aria-label="Thời gian còn lại" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+                    <div class="timer-fill" id="timerBar"></div>
+                </div>
+            </div>
+
+            <div class="card question-card">
+                <div class="section-label" id="targetLabel">TÌM HAI SỐ NGUYÊN TỐ CÓ TỔNG BẰNG</div>
+                <div class="target-number" id="targetNumber">20</div>
+                <p class="target-description" id="questionDescription">Nhập hai số nguyên tố để tạo thành số chẵn ở trên.</p>
+
+                <form id="answerForm" novalidate>
+                    <div class="input-area">
+                        <div class="input-group">
+                            <label for="primeOne" id="firstNumberLabel">Số nguyên tố thứ nhất</label>
+                            <input class="prime-input" id="primeOne" type="number" min="1" step="1" inputmode="numeric" autocomplete="off" aria-label="Số nguyên tố thứ nhất">
+                        </div>
+                        <div class="plus-sign" aria-hidden="true">+</div>
+                        <div class="input-group">
+                            <label for="primeTwo" id="secondNumberLabel">Số nguyên tố thứ hai</label>
+                            <input class="prime-input" id="primeTwo" type="number" min="1" step="1" inputmode="numeric" autocomplete="off" aria-label="Số nguyên tố thứ hai">
+                        </div>
+                    </div>
+
+                    <p class="input-hint" id="inputHint">Bạn có thể nhập hai số nguyên tố giống nhau.</p>
+
+                    <div class="action-area">
+                        <button class="primary-btn" id="checkButton" type="submit"><span id="checkButtonText">Kiểm tra</span><span aria-hidden="true">✓</span></button>
+                        <button class="secondary-btn hint-btn" id="hintButton" type="button">💡 <span id="hintButtonText">Gợi ý (-25 điểm)</span></button>
+                    </div>
+                </form>
+
+                <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            </div>
+        </section>
+
+        <!-- Màn hình kết thúc -->
+        <section id="gameOverScreen" class="screen" hidden>
+            <div class="gameover-icon" aria-hidden="true">🏁</div>
+            <h1 class="gameover-title" id="gameOverTitle">Trò chơi kết thúc!</h1>
+            <p class="gameover-description" id="gameOverReason">Bạn đã hết thời gian!</p>
+
+            <div class="result-card">
+                <div class="section-label" id="finalScoreLabel">TỔNG ĐIỂM</div>
+                <div class="result-score" id="finalScore">0</div>
+                <div class="result-grid">
+                    <div class="result-item"><span id="finalLevelLabel">Cấp độ cao nhất đã vượt qua</span><span id="finalLevel">0</span></div>
+                    <div class="result-item"><span id="finalStreakLabel">Chuỗi thắng tốt nhất</span><span id="finalStreak">0</span></div>
+                </div>
+                <p class="new-record" id="newRecord" hidden>🏆 Chúc mừng! Bạn vừa lập kỷ lục mới!</p>
+            </div>
+
+            <button class="primary-btn start-btn" id="restartButton" type="button"><span id="restartButtonText">Chơi lại</span><span aria-hidden="true">🔄</span></button>
+        </section>
+    </main>
+
+    <footer><p id="footerText">© 2026 My GameHub. Goldbach's Game.</p></footer>
+
+    <script>
+        "use strict";
+
+        /* =============================================
+           1. CẤU HÌNH CÓ THỂ TÙY CHỈNH
+        ============================================= */
+        const GAME_CONFIG = Object.freeze({
+            // Mỗi câu luôn có cùng thời gian, không giảm theo cấp độ.
+            TIME_PER_QUESTION: 10,
+
+            // Mức phạt gợi ý tăng dần theo tổng số gợi ý đã dùng trong lượt chơi.
+            HINT_BASE_PENALTY: 25,
+
+            // Độ khó chỉ tăng sau mỗi 5 cấp độ.
+            LEVELS_PER_DIFFICULTY_STEP: 5,
+            BASE_PRIME_LIMIT: 13,
+            PRIME_LIMIT_STEP: 20,
+
+            // Giới hạn trên để số mục tiêu không tăng vô hạn.
+            MAX_PRIME_LIMIT: 500,
+
+            POINTS_PER_CORRECT_ANSWER: 100,
+            FEEDBACK_DELAY_MS: 550,
+            NEXT_QUESTION_DELAY_MS: 650
+        });
+
+        /* =============================================
+           2. TỪ ĐIỂN ĐA NGÔN NGỮ
+        ============================================= */
+        const translations = {
+            vi: {
+                startDescription: "Khám phá thế giới số nguyên tố và thử thách khả năng tư duy toán học của bạn!",
+                theoryLabel: "GIẢ THUYẾT GOLDBACH",
+                formulaDescription: "Mọi số chẵn lớn hơn 2 đều có thể biểu diễn thành tổng của hai số nguyên tố.",
+                startButton: "Bắt đầu chơi",
+                highScore: "Kỷ lục cao nhất",
+                gameHeading: "🧠 Thử thách toán học",
+                level: "CẤP ĐỘ",
+                streak: "CHUỖI THẮNG",
+                score: "ĐIỂM SỐ",
+                timer: "⏳ Thời gian còn lại",
+                targetLabel: "TÌM HAI SỐ NGUYÊN TỐ CÓ TỔNG BẰNG",
+                questionDescription: "Nhập hai số nguyên tố để tạo thành số chẵn ở trên.",
+                firstNumber: "Số nguyên tố thứ nhất",
+                secondNumber: "Số nguyên tố thứ hai",
+                inputHint: "Bạn có thể nhập hai số nguyên tố giống nhau.",
+                checkButton: "Kiểm tra",
+                hintButton: "Gợi ý",
+                hintButtonCost: "Gợi ý (-{points} điểm)",
+                hintUsedButton: "Đã dùng gợi ý",
+                feedback: {
+                    empty: "⚠️ Vui lòng nhập đầy đủ cả hai số!",
+                    invalid: "⚠️ Vui lòng chỉ nhập các chữ số nguyên hợp lệ!",
+                    notPositive: "⚠️ Số nguyên tố phải là số nguyên dương lớn hơn 1!",
+                    notInteger: "⚠️ Đáp án phải là số nguyên hợp lệ!",
+                    notPrime: "❌ Một hoặc cả hai số bạn nhập không phải số nguyên tố!",
+                    wrongSum: "❌ Tổng của hai số chưa bằng số mục tiêu!",
+                    correct: "🎉 Chính xác! +100 điểm!",
+                    hint: "💡 Một số nguyên tố trong đáp án là: {number}. Đã trừ {points} điểm.",
+                    hintUsed: "Bạn đã sử dụng gợi ý trong câu này rồi!"
+                },
+                gameOver: "Trò chơi kết thúc!",
+                reasons: {
+                    timeout: "⏰ Bạn đã hết thời gian!",
+                    notPrime: "❌ Bạn đã nhập một số không phải số nguyên tố!",
+                    wrongSum: "❌ Tổng của hai số không bằng số mục tiêu!"
+                },
+                finalScore: "TỔNG ĐIỂM",
+                finalLevel: "Cấp độ cao nhất đã vượt qua",
+                finalStreak: "Chuỗi thắng tốt nhất",
+                newRecord: "🏆 Chúc mừng! Bạn vừa lập kỷ lục mới!",
+                restart: "Chơi lại",
+                footer: "© 2026 My GameHub. Goldbach's Game."
+            },
+            en: {
+                startDescription: "Explore the world of prime numbers and challenge your mathematical thinking!",
+                theoryLabel: "GOLDBACH'S CONJECTURE",
+                formulaDescription: "Every even integer greater than 2 can be expressed as the sum of two prime numbers.",
+                startButton: "Start Game",
+                highScore: "High Score",
+                gameHeading: "🧠 Math Challenge",
+                level: "LEVEL",
+                streak: "WIN STREAK",
+                score: "SCORE",
+                timer: "⏳ Time remaining",
+                targetLabel: "FIND TWO PRIME NUMBERS WHOSE SUM IS",
+                questionDescription: "Enter two prime numbers that add up to the target number above.",
+                firstNumber: "First prime number",
+                secondNumber: "Second prime number",
+                inputHint: "You may use the same prime number twice.",
+                checkButton: "Check Answer",
+                hintButton: "Hint",
+                hintButtonCost: "Hint (-{points} points)",
+                hintUsedButton: "Hint used",
+                feedback: {
+                    empty: "⚠️ Please enter both numbers!",
+                    invalid: "⚠️ Please enter valid whole numbers only!",
+                    notPositive: "⚠️ Prime numbers must be positive integers greater than 1!",
+                    notInteger: "⚠️ Your answers must be valid integers!",
+                    notPrime: "❌ One or both of your numbers are not prime!",
+                    wrongSum: "❌ The sum of your numbers does not match the target!",
+                    correct: "🎉 Correct! +100 points!",
+                    hint: "💡 One prime number in the answer is: {number}. {points} points deducted.",
+                    hintUsed: "You have already used a hint for this question!"
+                },
+                gameOver: "Game Over!",
+                reasons: {
+                    timeout: "⏰ Time is up!",
+                    notPrime: "❌ You entered a number that is not prime!",
+                    wrongSum: "❌ The sum of your numbers does not match the target!"
+                },
+                finalScore: "FINAL SCORE",
+                finalLevel: "Highest level passed",
+                finalStreak: "Best winning streak",
+                newRecord: "🏆 Congratulations! You achieved a new record!",
+                restart: "Play Again",
+                footer: "© 2026 My GameHub. Goldbach's Game."
+            }
+        };
+
+        /* =============================================
+           3. TRẠNG THÁI TRÒ CHƠI
+        ============================================= */
+        const state = {
+            screen: "start",
+            language: "vi",
+            score: 0,
+            level: 1,
+            streak: 0,
+            bestStreak: 0,
+            highestLevelPassed: 0,
+            highScore: 0,
+            target: 0,
+            answerOne: 0,
+            answerTwo: 0,
+            hintsUsed: 0,
+            hintUsedThisQuestion: false,
+            locked: false,
+            duration: GAME_CONFIG.TIME_PER_QUESTION,
+            endTime: 0,
+            endReason: null,
+            newRecord: false,
+            feedback: null
+        };
+
+        let timerInterval = null;
+        let pendingTimeout = null;
+        let audioContext = null;
+        const primeCache = new Map();
+
+        /* =============================================
+           4. CÁC PHẦN TỬ GIAO DIỆN
+        ============================================= */
+        const $ = id => document.getElementById(id);
+        const startScreen = $("startScreen");
+        const gameScreen = $("gameScreen");
+        const gameOverScreen = $("gameOverScreen");
+        const primeOne = $("primeOne");
+        const primeTwo = $("primeTwo");
+        const answerForm = $("answerForm");
+        const checkButton = $("checkButton");
+        const hintButton = $("hintButton");
+        const timerBar = $("timerBar");
+        const timerText = $("timerText");
+        const timerProgress = $("timerProgress");
+        const feedback = $("feedback");
+
+        /* =============================================
+           5. LƯU VÀ ĐỌC DỮ LIỆU TRÌNH DUYỆT
+        ============================================= */
+        function loadSavedData() {
+            try {
+                const savedLanguage = localStorage.getItem("goldbach_language");
+                if (savedLanguage === "vi" || savedLanguage === "en") {
+                    state.language = savedLanguage;
+                }
+
+                const savedScore = Number(localStorage.getItem("goldbach_highscore"));
+                if (Number.isSafeInteger(savedScore) && savedScore >= 0) {
+                    state.highScore = savedScore;
+                }
+            } catch (error) {
+                // Trò chơi vẫn chạy bình thường nếu trình duyệt không cho dùng localStorage.
+            }
+        }
+
+        function saveLanguage() {
+            try { localStorage.setItem("goldbach_language", state.language); }
+            catch (error) { /* Bỏ qua lỗi lưu trữ để không gián đoạn trò chơi. */ }
+        }
+
+        function saveHighScore() {
+            try { localStorage.setItem("goldbach_highscore", String(state.highScore)); }
+            catch (error) { /* Bỏ qua lỗi lưu trữ để không gián đoạn trò chơi. */ }
+        }
+
+        /* =============================================
+           6. ĐA NGÔN NGỮ KHÔNG CẦN TẢI LẠI TRANG
+        ============================================= */
+        function toggleLanguage() {
+            state.language = state.language === "vi" ? "en" : "vi";
+            saveLanguage();
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            const t = translations[state.language];
+            document.documentElement.lang = state.language;
+            document.title = "Goldbach's Game";
+
+            $("langVI").classList.toggle("selected", state.language === "vi");
+            $("langEN").classList.toggle("selected", state.language === "en");
+            $("languageToggle").setAttribute("aria-label", state.language === "vi" ? "Switch to English" : "Chuyển sang Tiếng Việt");
+
+            $("startDescription").textContent = t.startDescription;
+            $("theoryLabel").textContent = t.theoryLabel;
+            $("formulaDescription").textContent = t.formulaDescription;
+            $("startButtonText").textContent = t.startButton;
+            $("highScoreLabel").textContent = t.highScore;
+            $("gameHeading").textContent = t.gameHeading;
+            $("levelLabel").textContent = t.level;
+            $("streakLabel").textContent = t.streak;
+            $("scoreLabel").textContent = t.score;
+            $("timerLabel").textContent = t.timer;
+            $("targetLabel").textContent = t.targetLabel;
+            $("questionDescription").textContent = t.questionDescription;
+            $("firstNumberLabel").textContent = t.firstNumber;
+            $("secondNumberLabel").textContent = t.secondNumber;
+            primeOne.setAttribute("aria-label", t.firstNumber);
+            primeTwo.setAttribute("aria-label", t.secondNumber);
+            $("inputHint").textContent = t.inputHint;
+            $("checkButtonText").textContent = t.checkButton;
+            $("gameOverTitle").textContent = t.gameOver;
+            $("finalScoreLabel").textContent = t.finalScore;
+            $("finalLevelLabel").textContent = t.finalLevel;
+            $("finalStreakLabel").textContent = t.finalStreak;
+            $("newRecord").textContent = t.newRecord;
+            $("restartButtonText").textContent = t.restart;
+            $("footerText").textContent = t.footer;
+
+            updateHintButton();
+            updateHUD();
+            updateHighScoreDisplay();
+            updateTimerDisplay();
+            if (state.feedback) renderFeedback();
+            if (state.screen === "over") renderGameOver();
+        }
+
+        /* =============================================
+           7. CHUYỂN MÀN HÌNH VÀ CẬP NHẬT ĐIỂM
+        ============================================= */
+        function setScreen(screenName) {
+            state.screen = screenName;
+            startScreen.hidden = screenName !== "start";
+            gameScreen.hidden = screenName !== "playing";
+            gameOverScreen.hidden = screenName !== "over";
+        }
+
+        function formatNumber(value) {
+            return value.toLocaleString(state.language === "vi" ? "vi-VN" : "en-US");
+        }
+
+        function updateHUD() {
+            $("levelValue").textContent = String(state.level);
+            $("streakValue").textContent = `${state.streak} 🔥`;
+            $("scoreValue").textContent = formatNumber(state.score);
+        }
+
+        function updateHighScoreDisplay() {
+            $("startHighScore").textContent = formatNumber(state.highScore);
+        }
+
+        /* =============================================
+           8. KIỂM TRA SỐ NGUYÊN TỐ
+        ============================================= */
+        function isPrime(n) {
+            if (!Number.isSafeInteger(n) || n <= 1) return false;
+            if (n === 2 || n === 3) return true;
+            if (n % 2 === 0 || n % 3 === 0) return false;
+
+            const limit = Math.floor(Math.sqrt(n));
+            for (let divisor = 5; divisor <= limit; divisor += 6) {
+                if (n % divisor === 0 || n % (divisor + 2) === 0) return false;
+            }
+            return true;
+        }
+
+        /* =============================================
+           9. TẠO DANH SÁCH SỐ NGUYÊN TỐ VÀ CÂU HỎI
+        ============================================= */
+        function generatePrimeList(limit) {
+            if (primeCache.has(limit)) return primeCache.get(limit);
+
+            // Sàng Eratosthenes; chỉ lấy số nguyên tố lẻ để tổng luôn là số chẵn.
+            const sieve = new Uint8Array(limit + 1);
+            sieve.fill(1);
+            sieve[0] = 0;
+            sieve[1] = 0;
+
+            for (let p = 2; p * p <= limit; p++) {
+                if (sieve[p]) {
+                    for (let multiple = p * p; multiple <= limit; multiple += p) {
+                        sieve[multiple] = 0;
+                    }
+                }
+            }
+
+            const primes = [];
+            for (let n = 3; n <= limit; n += 2) {
+                if (sieve[n]) primes.push(n);
+            }
+
+            primeCache.set(limit, primes);
+            return primes;
+        }
+
+        function getPrimeLimitForLevel(level) {
+            // Mức giới hạn chỉ nhảy lên sau mỗi 5 level và không vượt quá mức tối đa.
+            const difficultyStep = Math.floor((level - 1) / GAME_CONFIG.LEVELS_PER_DIFFICULTY_STEP);
+            return Math.min(
+                GAME_CONFIG.MAX_PRIME_LIMIT,
+                GAME_CONFIG.BASE_PRIME_LIMIT + difficultyStep * GAME_CONFIG.PRIME_LIMIT_STEP
+            );
+        }
+
+        function generateTargetNumber(level) {
+            const primeLimit = getPrimeLimitForLevel(level);
+            const primes = generatePrimeList(primeLimit);
+
+            // Tạo số mục tiêu bằng tổng của hai số nguyên tố, bảo đảm luôn có lời giải.
+            const answerOne = primes[Math.floor(Math.random() * primes.length)];
+            const answerTwo = primes[Math.floor(Math.random() * primes.length)];
+
+            return {
+                target: answerOne + answerTwo,
+                answerOne,
+                answerTwo
+            };
+        }
+
+        /* =============================================
+           10. ÂM THANH PHẢN HỒI
+        ============================================= */
+        function playTone(frequency, duration = 0.14) {
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContextClass) return;
+                if (!audioContext) audioContext = new AudioContextClass();
+                if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
+
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                oscillator.type = "sine";
+                oscillator.frequency.value = frequency;
+                gain.gain.setValueAtTime(.12, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(.001, audioContext.currentTime + duration);
+                oscillator.connect(gain);
+                gain.connect(audioContext.destination);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + duration);
+            } catch (error) {
+                // Âm thanh chỉ là hiệu ứng phụ, không ảnh hưởng logic game.
+            }
+        }
+
+        function playSuccessSound() {
+            playTone(523, .12);
+            window.setTimeout(() => playTone(659, .12), 100);
+            window.setTimeout(() => playTone(784, .18), 200);
+        }
+
+        function playErrorSound() { playTone(180, .3); }
+
+        /* =============================================
+           11. QUẢN LÝ TIMER CỐ ĐỊNH 10 GIÂY
+        ============================================= */
+        function stopTimer() {
+            if (timerInterval !== null) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function clearPendingTimeout() {
+            if (pendingTimeout !== null) {
+                clearTimeout(pendingTimeout);
+                pendingTimeout = null;
+            }
+        }
+
+        function updateTimerDisplay() {
+            if (state.screen !== "playing") return;
+
+            const remaining = Math.max(0, state.endTime - performance.now());
+            const percentage = Math.max(0, Math.min(100, remaining / (state.duration * 1000) * 100));
+            timerBar.style.width = `${percentage}%`;
+            timerText.textContent = `${Math.ceil(remaining / 1000)}s`;
+            timerProgress.setAttribute("aria-valuenow", String(Math.round(percentage)));
+
+            if (percentage > 50) {
+                timerBar.style.backgroundColor = "#22c55e";
+                timerText.style.color = "#4ade80";
+            } else if (percentage > 25) {
+                timerBar.style.backgroundColor = "#f59e0b";
+                timerText.style.color = "#fbbf24";
+            } else {
+                timerBar.style.backgroundColor = "#ef4444";
+                timerText.style.color = "#f87171";
+            }
+        }
+
+        function startTimer() {
+            stopTimer();
+            state.duration = GAME_CONFIG.TIME_PER_QUESTION;
+            state.endTime = performance.now() + state.duration * 1000;
+            updateTimerDisplay();
+
+            timerInterval = window.setInterval(() => {
+                if (state.screen !== "playing") {
+                    stopTimer();
+                    return;
+                }
+
+                if (state.endTime - performance.now() <= 0) {
+                    updateTimerDisplay();
+                    gameOver("timeout");
+                    return;
+                }
+                updateTimerDisplay();
+            }, 50);
+        }
+
+        /* =============================================
+           12. THÔNG BÁO VÀ NÚT GỢI Ý
+        ============================================= */
+        function showFeedback(key, type = "info", params = {}) {
+            state.feedback = { key, type, params };
+            renderFeedback();
+        }
+
+        function renderFeedback() {
+            if (!state.feedback) {
+                feedback.textContent = "";
+                feedback.className = "feedback";
+                return;
+            }
+
+            const messageTemplate = translations[state.language].feedback[state.feedback.key] || "";
+            const message = messageTemplate.replace(/\{(\w+)\}/g, (match, key) => {
+                return Object.prototype.hasOwnProperty.call(state.feedback.params, key)
+                    ? String(state.feedback.params[key])
+                    : match;
+            });
+
+            feedback.textContent = message;
+            feedback.className = `feedback ${state.feedback.type} show`;
+        }
+
+        function getNextHintPenalty() {
+            // Lần đầu: 25, lần hai: 50, lần ba: 75... trong cùng một lượt chơi.
+            return GAME_CONFIG.HINT_BASE_PENALTY * (state.hintsUsed + 1);
+        }
+
+        function updateHintButton() {
+            const t = translations[state.language];
+            const buttonText = state.hintUsedThisQuestion
+                ? t.hintUsedButton
+                : t.hintButtonCost.replace("{points}", formatNumber(getNextHintPenalty()));
+            $("hintButtonText").textContent = buttonText;
+            hintButton.disabled = state.screen !== "playing" || state.locked || state.hintUsedThisQuestion;
+        }
+
+        function useHint() {
+            if (state.screen !== "playing" || state.locked || state.hintUsedThisQuestion) return;
+
+            const penalty = getNextHintPenalty();
+            state.hintsUsed += 1;
+            state.hintUsedThisQuestion = true;
+            state.score = Math.max(0, state.score - penalty);
+            updateHUD();
+            updateHintButton();
+
+            const chosenAnswer = Math.random() < .5 ? state.answerOne : state.answerTwo;
+
+            // Điền gợi ý vào ô trống; nếu cả hai ô đã có số thì không ghi đè câu trả lời.
+            if (!primeOne.value.trim()) {
+                primeOne.value = String(chosenAnswer);
+                primeTwo.focus();
+            } else if (!primeTwo.value.trim()) {
+                primeTwo.value = String(chosenAnswer);
+                primeOne.focus();
+            }
+
+            showFeedback("hint", "info", {
+                number: chosenAnswer,
+                points: formatNumber(penalty)
+            });
+            // Không thay đổi thời gian còn lại khi dùng gợi ý.
+        }
+
+        /* =============================================
+           13. SINH CÂU HỎI MỚI VÀ BẮT ĐẦU LƯỢT CHƠI
+        ============================================= */
+        function generateNewQuestion() {
+            if (state.screen !== "playing") return;
+
+            state.locked = false;
+            state.feedback = null;
+            state.hintUsedThisQuestion = false;
+            primeOne.value = "";
+            primeTwo.value = "";
+            checkButton.disabled = false;
+
+            const question = generateTargetNumber(state.level);
+            state.target = question.target;
+            state.answerOne = question.answerOne;
+            state.answerTwo = question.answerTwo;
+            $("targetNumber").textContent = String(state.target);
+
+            renderFeedback();
+            updateHintButton();
+            updateHUD();
+            startTimer();
+
+            window.requestAnimationFrame(() => {
+                if (state.screen === "playing" && !state.locked) primeOne.focus();
+            });
+        }
+
+        function startGame() {
+            stopTimer();
+            clearPendingTimeout();
+
+            state.score = 0;
+            state.level = 1;
+            state.streak = 0;
+            state.bestStreak = 0;
+            state.highestLevelPassed = 0;
+            state.hintsUsed = 0;
+            state.hintUsedThisQuestion = false;
+            state.locked = false;
+            state.feedback = null;
+            state.newRecord = false;
+            state.endReason = null;
+
+            setScreen("playing");
+            updateHUD();
+            generateNewQuestion();
+        }
+
+        /* =============================================
+           14. ĐỌC VÀ KIỂM TRA DỮ LIỆU NHẬP
+        ============================================= */
+        function getInputNumber(input) {
+            const rawValue = input.value.trim();
+            if (rawValue === "") return { valid: false, reason: "empty" };
+            if (!/^\d+$/.test(rawValue)) return { valid: false, reason: "invalid" };
+
+            const value = Number(rawValue);
+            if (!Number.isSafeInteger(value)) return { valid: false, reason: "notInteger" };
+            if (value <= 0) return { valid: false, reason: "notPositive" };
+            return { valid: true, value };
+        }
+
+        function finishAfterFeedback(reason) {
+            if (state.screen !== "playing") return;
+            stopTimer();
+            state.locked = true;
+            checkButton.disabled = true;
+            hintButton.disabled = true;
+            clearPendingTimeout();
+
+            pendingTimeout = window.setTimeout(() => {
+                pendingTimeout = null;
+                if (state.screen === "playing") gameOver(reason);
+            }, GAME_CONFIG.FEEDBACK_DELAY_MS);
+        }
+
+        function checkAnswer(event) {
+            if (event) event.preventDefault();
+            if (state.screen !== "playing" || state.locked) return;
+
+            const first = getInputNumber(primeOne);
+            const second = getInputNumber(primeTwo);
+
+            if (first.reason === "empty" || second.reason === "empty") {
+                showFeedback("empty", "error");
+                (primeOne.value.trim() === "" ? primeOne : primeTwo).focus();
+                return;
+            }
+
+            if (!first.valid) {
+                showFeedback(first.reason, "error");
+                primeOne.focus();
+                return;
+            }
+
+            if (!second.valid) {
+                showFeedback(second.reason, "error");
+                primeTwo.focus();
+                return;
+            }
+
+            const a = first.value;
+            const b = second.value;
+
+            if (!isPrime(a) || !isPrime(b)) {
+                showFeedback("notPrime", "error");
+                playErrorSound();
+                finishAfterFeedback("notPrime");
+                return;
+            }
+
+            if (a + b !== state.target) {
+                showFeedback("wrongSum", "error");
+                playErrorSound();
+                finishAfterFeedback("wrongSum");
+                return;
+            }
+
+            // Đáp án đúng: khóa thao tác và dừng đồng hồ hiện tại trước khi cộng điểm.
+            state.locked = true;
+            checkButton.disabled = true;
+            hintButton.disabled = true;
+            stopTimer();
+
+            state.score += GAME_CONFIG.POINTS_PER_CORRECT_ANSWER;
+            state.streak += 1;
+            state.bestStreak = Math.max(state.bestStreak, state.streak);
+            state.highestLevelPassed = Math.max(state.highestLevelPassed, state.level);
+
+            if (state.score > state.highScore) {
+                state.highScore = state.score;
+                state.newRecord = true;
+                saveHighScore();
+            }
+
+            updateHUD();
+            updateHighScoreDisplay();
+            showFeedback("correct", "success");
+            playSuccessSound();
+
+            state.level += 1;
+            clearPendingTimeout();
+            pendingTimeout = window.setTimeout(() => {
+                pendingTimeout = null;
+                if (state.screen === "playing") generateNewQuestion();
+            }, GAME_CONFIG.NEXT_QUESTION_DELAY_MS);
+        }
+
+        /* =============================================
+           15. KẾT THÚC TRÒ CHƠI VÀ HIỂN THỊ KẾT QUẢ
+        ============================================= */
+        function gameOver(reason) {
+            if (state.screen !== "playing") return;
+
+            stopTimer();
+            clearPendingTimeout();
+            state.locked = true;
+            state.endReason = reason;
+
+            if (state.score > state.highScore) {
+                state.highScore = state.score;
+                state.newRecord = true;
+                saveHighScore();
+            }
+
+            setScreen("over");
+            updateHighScoreDisplay();
+            renderGameOver();
+        }
+
+        function renderGameOver() {
+            const t = translations[state.language];
+            $("gameOverTitle").textContent = t.gameOver;
+            $("gameOverReason").textContent = t.reasons[state.endReason] || t.reasons.timeout;
+            $("finalScore").textContent = formatNumber(state.score);
+            $("finalLevel").textContent = String(state.highestLevelPassed);
+            $("finalStreak").textContent = String(state.bestStreak);
+            $("newRecord").hidden = !state.newRecord;
+            $("newRecord").textContent = t.newRecord;
+        }
+
+        /* =============================================
+           16. NGĂN KÝ TỰ KHÔNG PHẢI CHỮ SỐ
+        ============================================= */
+        function protectNumberInput(input) {
+            input.addEventListener("keydown", event => {
+                const blockedKeys = ["e", "E", "+", "-", ".", ","];
+                if (blockedKeys.includes(event.key)) event.preventDefault();
+            });
+
+            input.addEventListener("paste", event => {
+                const pastedText = event.clipboardData.getData("text").trim();
+                if (!/^\d+$/.test(pastedText)) event.preventDefault();
+            });
+
+            input.addEventListener("input", () => {
+                const value = input.value;
+                if (value !== "" && !/^\d+$/.test(value)) input.value = "";
+            });
+        }
+
+        /* =============================================
+           17. GẮN SỰ KIỆN VÀ KHỞI TẠO
+        ============================================= */
+        $("languageToggle").addEventListener("click", toggleLanguage);
+        $("startButton").addEventListener("click", startGame);
+        $("restartButton").addEventListener("click", startGame);
+        answerForm.addEventListener("submit", checkAnswer);
+        hintButton.addEventListener("click", useHint);
+        protectNumberInput(primeOne);
+        protectNumberInput(primeTwo);
+
+        // Dọn bộ đếm khi người chơi rời khỏi trang.
+        window.addEventListener("pagehide", () => {
+            stopTimer();
+            clearPendingTimeout();
+        });
+
+        function initializeGame() {
+            loadSavedData();
+            updateLanguage();
+            updateHighScoreDisplay();
+            setScreen("start");
+        }
+
+        initializeGame();
+    </script>
+</body>
+</html>

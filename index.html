@@ -10,8 +10,8 @@
             --bg-color: #121212;
             --card-bg: #1e1e1e;
             --text-color: #e0e0e0;
-            --accent-color: #3498db;
-            --accent-hover: #2980b9;
+            --accent-color: #1A73E8;
+            --accent-hover: #3189F5;
             --border-color: #2c3e50;
         }
 
@@ -110,7 +110,7 @@
         /* Khu vực hiển thị nội dung chính */
         main {
             flex: 1;
-            max-width: 1200px;
+            max-width: 1500px;
             width: 100%;
             margin: 0 auto;
             padding: 40px 20px;
@@ -173,11 +173,10 @@
             margin-bottom: 10px;
         }
 
-        /* Cấu trúc lưới linh hoạt khi có nhiều game */
+        /* Lưới 4 cột trên desktop, tự co giãn trên màn hình nhỏ */
         .games-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             align-items: stretch;
             gap: 25px;
             width: 100%;
@@ -192,14 +191,14 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            max-width: 360px; /* Định kích thước đều nhau cho các card */
+            min-width: 0;
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
         .game-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(52, 152, 219, 0.2);
+            box-shadow: 0 15px 30px rgba(26, 115, 232, 0.22);
             border-color: var(--accent-color);
         }
 
@@ -259,6 +258,77 @@
 
         .game-btn:hover {
             background-color: var(--accent-hover);
+        }
+
+
+        /* Hình minh họa riêng cho Gold Bach's Game */
+        .bg-goldbach {
+            background: #fafafa;
+        }
+
+        .goldbach-svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .game-btn {
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .game-btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 14px rgba(26, 115, 232, 0.25);
+        }
+
+        .game-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Tablet: 2 cột */
+        @media (max-width: 1280px) {
+            .games-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        /* Điện thoại: 1 cột */
+        @media (max-width: 600px) {
+            main {
+                padding: 28px 16px;
+            }
+
+            .games-header h1,
+            .about-header h1 {
+                font-size: 2rem;
+            }
+
+            .games-container {
+                grid-template-columns: 1fr;
+                gap: 22px;
+            }
+
+            .game-thumbnail {
+                height: 190px;
+            }
+
+            .nav-container {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .nav-controls {
+                gap: 8px;
+            }
+
+            .nav-links {
+                gap: 4px;
+            }
+
+            .nav-links a {
+                padding: 7px 10px;
+            }
         }
 
         /* Footer */
@@ -361,6 +431,68 @@
                         <a href="flag.html" class="game-btn" id="game3Btn">Chơi Ngay ⚡</a>
                     </div>
                 </div>
+
+                <!-- Thẻ Game 4: Gold Bach's Game -->
+                <div class="game-card">
+                    <div class="game-thumbnail bg-goldbach">
+                        <svg class="goldbach-svg" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"
+                             role="img" aria-label="Minh họa Goldbach: 7 cộng 13 bằng 20">
+                            <rect width="400" height="180" fill="#FAFAFA"/>
+
+                            <text x="200" y="23" text-anchor="middle" fill="#777777"
+                                  font-family="Segoe UI, sans-serif" font-size="11" font-weight="700"
+                                  letter-spacing="2">GOLDBACH'S CONJECTURE</text>
+
+                            <!-- Một vài số nguyên tố -->
+                            <g fill="#1A73E8" font-family="Segoe UI, sans-serif"
+                               font-size="23" font-weight="700" text-anchor="middle">
+                                <text x="64" y="66">3</text>
+                                <text x="113" y="66">5</text>
+                                <text x="162" y="66">7</text>
+                                <text x="211" y="66">11</text>
+                                <text x="260" y="66">13</text>
+                                <text x="309" y="66">17</text>
+                            </g>
+
+                            <!-- Hai số nguyên tố được chọn -->
+                            <rect x="111" y="79" width="73" height="38" rx="9" fill="#E8F0FE"/>
+                            <rect x="216" y="79" width="73" height="38" rx="9" fill="#E8F0FE"/>
+                            <g fill="#174EA6" font-family="Segoe UI, sans-serif" font-size="24"
+                               font-weight="800" text-anchor="middle">
+                                <text x="147" y="106">7</text>
+                                <text x="252" y="106">13</text>
+                            </g>
+                            <text x="200" y="108" text-anchor="middle" fill="#D93025"
+                                  font-family="Segoe UI, sans-serif" font-size="25" font-weight="800">+</text>
+
+                            <!-- Đường nối hướng tới kết quả -->
+                            <path d="M147 120 Q147 132 177 137" fill="none" stroke="#1A73E8"
+                                  stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M252 120 Q252 132 223 137" fill="none" stroke="#1A73E8"
+                                  stroke-width="2.5" stroke-linecap="round"/>
+
+                            <!-- Số chẵn mục tiêu và dấu hỏi -->
+                            <rect x="151" y="137" width="98" height="36" rx="9" fill="#1A73E8"/>
+                            <text x="200" y="163" text-anchor="middle" fill="#FFFFFF"
+                                  font-family="Segoe UI, sans-serif" font-size="24" font-weight="800">20</text>
+                            <text x="267" y="164" fill="#D93025" font-family="Segoe UI, sans-serif"
+                                  font-size="24" font-weight="800">?</text>
+
+                            <!-- Đồng hồ đếm ngược -->
+                            <circle cx="356" cy="35" r="17" fill="#FFF3CD"/>
+                            <circle cx="356" cy="35" r="10.5" fill="none" stroke="#D99A00" stroke-width="2"/>
+                            <path d="M356 29 V35 L361 39" fill="none" stroke="#D99A00"
+                                  stroke-width="2" stroke-linecap="round"/>
+                            <path d="M352 15 H360" stroke="#D99A00" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="game-info">
+                        <h2 class="game-title" id="game4Title">Gold Bach's Game</h2>
+                        <p class="game-desc" id="game4Desc">Thử thách tư duy toán học của bạn! Trò chơi cung cấp một số chẵn ngẫu nhiên, bạn hãy tìm hai số nguyên tố mà tổng của chúng bằng số đã cho. Độ khó tăng dần theo số lượng màn chơi. Cố gắng giải nhanh nhất có thể!</p>
+                        <a href="goldbach.html" class="game-btn" id="game4Btn">Chơi Ngay ⚡</a>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -408,6 +540,11 @@
                 game3Title: "Guessing Flag Trivia",
                 game3Desc: "Thử thách kiến thức địa lý toàn cầu với hơn 120 quốc gia. Nhiều chế độ chơi: 5/10/20 câu, All Countries và Rush Mode! (Lưu ý: Nội dung & đáp án game bằng Tiếng Anh).",
                 game3Btn: "Chơi Ngay ⚡",
+
+                // Game 4: Gold Bach's Game
+                game4Title: "Gold Bach's Game",
+                game4Desc: "Thử thách tư duy toán học của bạn! Trò chơi cung cấp một số chẵn ngẫu nhiên, bạn hãy tìm hai số nguyên tố mà tổng của chúng bằng số đã cho. Độ khó tăng dần theo số lượng màn chơi. Cố gắng giải nhanh nhất có thể!",
+                game4Btn: "Chơi Ngay ⚡",
                 
                 footerText: "© 2026 My Game Hub. Được thiết kế bởi một Developer tràn đầy nhiệt huyết."
             },
@@ -441,6 +578,11 @@
                 game3Title: "Guessing Flag Trivia",
                 game3Desc: "Test your global geography knowledge with over 120 flags. Featuring multiple modes: 5/10/20 Qs, All Countries, and Rush Mode! (Note: Gameplay & answers are in English).",
                 game3Btn: "Play Now ⚡",
+
+                // Game 4: Goldbach's Game
+                game4Title: "Gold Bach's Game",
+                game4Desc: "Challenge your mathematical thinking! Each round gives you a random even number. Find two prime numbers whose sum equals the given number. The difficulty increases as you progress. Try to solve each challenge as quickly as possible!",
+                game4Btn: "Play Now ⚡",
                 
                 footerText: "© 2026 My Game Hub. Crafted by a passionate developer."
             }
@@ -484,6 +626,11 @@
             document.getElementById('game3Title').textContent = t.game3Title;
             document.getElementById('game3Desc').textContent = t.game3Desc;
             document.getElementById('game3Btn').textContent = t.game3Btn;
+
+            // Game 4
+            document.getElementById('game4Title').textContent = t.game4Title;
+            document.getElementById('game4Desc').textContent = t.game4Desc;
+            document.getElementById('game4Btn').textContent = t.game4Btn;
             
             // Footer
             document.getElementById('footerText').textContent = t.footerText;
